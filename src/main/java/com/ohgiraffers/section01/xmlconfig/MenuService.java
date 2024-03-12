@@ -13,10 +13,13 @@ import org.apache.ibatis.session.SqlSession;
 import java.util.List;
 
 import static com.ohgiraffers.section01.xmlconfig.Template.getSqlSession;
+import static java.awt.SystemColor.menu;
 
 public class MenuService {
 
     private final MenuDAO menuDAO;
+
+
     public MenuService() {
         this.menuDAO = new MenuDAO();
     }
@@ -33,4 +36,56 @@ public class MenuService {
         return menuList;
 
     }
+
+    public MenuDTO selectMenuByCode(int code) {
+
+        SqlSession sqlSession = getSqlSession();
+
+        MenuDTO menu = menuDAO.selectMenuByCode(sqlSession, code);
+
+        sqlSession.close();
+        return menu;
+
+    }
+
+    public boolean registMenu(MenuDTO menu) {
+
+        SqlSession sqlSession = getSqlSession();
+
+        int result = menuDAO.insertMenu(sqlSession, menu);
+
+
+        // 트렌젝션 제어
+        if(result > 0) {
+            sqlSession.commit();
+        } else {
+            sqlSession.rollback();
+        }
+
+        sqlSession.close();
+
+        return result > 0 ? true : false;
+
+    }
+
+
+    public boolean deleteMenu(int code) {
+
+        SqlSession sqlSession = getSqlSession();
+
+        int result = menuDAO.deleteMenu(sqlSession, menu);
+
+
+        // 트렌젝션 제어
+        if(result > 0) {
+            sqlSession.commit();
+        } else {
+            sqlSession.rollback();
+        }
+
+        sqlSession.close();
+
+        return result > 0 ? true : false;
+    }
 }
+
